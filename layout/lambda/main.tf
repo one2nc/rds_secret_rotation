@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "secrets_manager_rds_rotation_single_user_role_po
 }
 
 resource "aws_iam_policy" "secrets_manager_rds_rotation_single_user_role_policy" {
-  name   = "sm-rds-rotation-single-user-role-policy"
+  name   = "${var.rds_name}-sm-rds-rotation-single-user-role-policy"
   path   = "/"
   policy = data.aws_iam_policy_document.secrets_manager_rds_rotation_single_user_role_policy.json
 }
@@ -43,13 +43,13 @@ resource "aws_lambda_permission" "allow_secret_manager_call_lambda" {
 }
 
 resource "aws_iam_policy_attachment" "secrets_manager_rds_rotation_single_user_role_policy" {
-  name       = "sm-rds-rotation-single-user-role-policy"
+  name       = "${var.rds_name}-sm-rds-rotation-single-user-role-policy"
   roles      = ["${aws_iam_role.lambda_rotation.name}"]
   policy_arn = aws_iam_policy.secrets_manager_rds_rotation_single_user_role_policy.arn
 }
 
 resource "aws_iam_role" "lambda_rotation" {
-  name               = "lambda-rotation"
+  name               = "${var.rds_name}-lambda-rotation"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -68,7 +68,7 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda-logging"
+  name        = "${var.rds_name}-lambda-logging"
   path        = "/"
   description = "IAM policy for logging from a lambda"
 
@@ -97,7 +97,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 resource "aws_lambda_function" "rotate_code_postgres" {
   filename         = "${path.module}/rotate.zip"
-  function_name    = "rds-rotation-lambda"
+  function_name    = "${var.rds_name}-rds-rotation-lambda"
   role             = aws_iam_role.lambda_rotation.arn
   handler          = "lambda_function.lambda_handler"
   source_code_hash = filebase64sha256("${path.module}/rotate.zip")
@@ -116,8 +116,8 @@ resource "aws_lambda_function" "rotate_code_postgres" {
 }
 
 resource "aws_secretsmanager_secret" "secret" {
-  description         = "Secrets for ${var.rds_name}"
-  name                = "${var.rds_name}-postgres-secret"
+  description         = "RDS Credentials of ${var.rds_name} service"
+  name                = "postgres/${var.rds_name}"
   rotation_lambda_arn = aws_lambda_function.rotate_code_postgres.arn
   rotation_rules {
     automatically_after_days = "30"

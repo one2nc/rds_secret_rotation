@@ -16,13 +16,14 @@ module "vpc" {
 module "lambda" {
   source                 = "./lambda"
   rds_sg                 = module.rds.rds_rotation_security_group_id
-  subnet_ids             = module.vpc.private_subnet_id
+  subnet_ids             = [module.rds.rds_subnet_id]
   rds_master_username    = var.db_rds_username
   rds_master_password    = var.db_rds_password
   rds_host               = module.rds.db_endpoint
   rds_cluster_identifier = "${var.db_rds_dbname}-rds-cluster"
   rds_name               = var.db_rds_dbname
 }
+
 
 module "rds" {
   source                      = "./rds"

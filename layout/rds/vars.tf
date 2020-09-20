@@ -31,7 +31,6 @@ variable "db_allocated_storage" {
 variable "db_name" {
   description = "Name for the created database."
   type        = string
-  default     = ""
 }
 
 variable "db_backup_window" {
@@ -54,7 +53,7 @@ variable "private_subnet_id" {
 variable "enable_skip_final_snapshot" {
   description = "When DB is deleted and If this variable is false, no final snapshot will be made."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enable_public_access" {
@@ -81,13 +80,11 @@ variable "enable_rds_secrets_rotation" {
 
 variable "master_username" {
   description = "Database username"
-  default     = ""
   type        = string
 }
 
 variable "master_password" {
   description = "Database password"
-  default     = ""
   type        = string
 }
 

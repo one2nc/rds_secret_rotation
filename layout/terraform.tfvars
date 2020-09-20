@@ -1,4 +1,4 @@
-aws_profile                = "devops_demo"
+aws_profile                = "devops"
 aws_region                 = "us-east-1"
 vpc_cidr_block             = "10.0.0.0/16"
 public_subnet_count        = 2
@@ -9,4 +9,4 @@ eip_count                  = 2
 db_rds_dbname              = "testdb"
 db_rds_username            = "testuser"
 db_rds_password            = "testpass123"
-enable_rds_secret_rotation = true
+enable_rds_secret_rotation = false
